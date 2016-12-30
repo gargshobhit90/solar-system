@@ -1,11 +1,13 @@
 # Mini-Solar System
 
-## Completion
-I successfully completed all the parts of this assignment. 
-
+## Goal
+Create a small solar system. One sun with four orbiting planets.
 
 ##Implementation
-I started off with the shadedSphere2 files from the book code. I separated the modelViewMatrix into two separate matrices: model_transform and camera_transform. 
+I started off with a shaded sphere provided in WebGL example online. I separated the modelViewMatrix into two separate matrices: model_transform and camera_transform. 
+
+##How to view
+Just download the folder as a zip, or pull, and open solarSystem.html in a web browser.
 
 ##Coloring
 Instead of passing various light and material characteristics (ambience, shininess, specular) as vectors, I pass them in as scalar quantities. This helped reduce the size and number of variables being passed from my .js file to .html file. In the html file, I modified the code to account for these changes. 
@@ -33,11 +35,9 @@ GOURAUDColor = (ambient + diffuseProduct) * materialColor + specularProduct * li
 
 I also made several changes to the fragment-shader and vertex-shader, which are self-explanatory and can be seen in the code. 
 
-##Extra credit
-Part 1. Added a moon to one of the planets. 
+## Other features
+* Added a moon to one of the planets. 
+* The 'a' key attaches/detaches the view to the first planet. 
 
-Part 2. The 'a' key attaches/detaches the view to the first planet. 
-
-Part 3. Managed code development on GitHub.
 
 
