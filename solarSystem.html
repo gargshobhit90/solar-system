@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+
+precision mediump float;
+
+attribute vec4 vPosition;
+attribute vec4 vNormal;
+varying vec3 N, L, E;
+uniform mat4 model_transform;
+uniform mat4 camera_transform;
+uniform mat4 projectionMatrix;
+uniform vec4 lightPosition;
+uniform mat3 normalMatrix;
+uniform bool GOURAUD;
+varying vec4 GOURAUDColor;
+
+uniform float ambient;
+uniform float diffuse;
+uniform float specular;
+uniform float shininess;
+uniform vec4 lightColor;
+uniform vec4 materialColor;
+
+void main()
+{
+    vec3 pos = (model_transform * vPosition).xyz;
+    
+    // check for directional light    
+    if(lightPosition.w == 0.0) L = normalize(lightPosition.xyz);
+    else L = normalize( lightPosition.xyz - pos );
+    
+
+    E =  -normalize((camera_transform * model_transform * vPosition).xyz);
+    N = normalize( (model_transform*vNormal).xyz);
+
+    gl_Position = projectionMatrix * camera_transform * model_transform * vPosition;  
+
+    if(GOURAUD)
+    {
+        float diffuseProduct = max( dot(L, N), 0.0 )*diffuse;
+        vec3 H = normalize( L + E );
+        float specularProduct = pow( max(dot(N, H), 0.0), shininess ) * specular;
+        if( dot(L, N) < 0.0 ) specularProduct = 0.0;
+
+        GOURAUDColor = (ambient + diffuseProduct) * materialColor + specularProduct * lightColor;
+    }
+    
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+
+precision mediump float;
+
+uniform float ambient;
+uniform float diffuse;
+uniform float specular;
+uniform float shininess;
+uniform vec4 lightColor;
+uniform vec4 materialColor;
+varying vec3 N, L, E;
+varying vec4 GOURAUDColor;
+uniform bool GOURAUD;
+
+void main()
+{   
+    if(GOURAUD == true)
+    {
+        gl_FragColor = GOURAUDColor;
+        gl_FragColor.a = 1.0;
+    } 
+    else
+    {
+        float diffuseProduct = max( dot(L, N), 0.0 )*diffuse;
+
+        vec3 H = normalize( L + E );
+        float specularProduct = pow( max(dot(N, H), 0.0), shininess ) * specular;
+        if( dot(L, N) < 0.0 ) specularProduct = 0.0;
+
+        gl_FragColor = (ambient + diffuseProduct) * materialColor + specularProduct * lightColor;
+        gl_FragColor.a = 1.0;
+    }
+
+}
+
+</script>
+
+
+<script type="text/javascript" src="webgl-utils.js"></script>
+<script type="text/javascript" src="initShaders.js"></script>
+<script type="text/javascript" src="MV.js"></script>
+<script type="text/javascript" src="solarSystem.js"></script>
+
+<body>
+<canvas id="gl-canvas" width="960" height="540">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+</body>
+</html>
